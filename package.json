@@ -1,15 +1,28 @@
 {
-  "name": "application-with-a-funny-name-and-a-funny-description",
-  "version": "0.1.0",
+  "name": "gamer-vision",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.1",
-    "@testing-library/react": "^12.1.2",
-    "@testing-library/user-event": "^13.5.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0-next.58",
-    "web-vitals": "^2.1.2"
+    "@testing-library/jest-dom": "^5.16.1",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
+    "@tensorflow/tfjs": "^3.6.0",
+    "@tensorflow/tfjs-core": "^3.6.0",
+    "@tensorflow/tfjs-converter": "^3.0.0-rc.1",
+    "@tensorflow/tfjs-backend-webgl": "^3.6.0",
+    "@tensorflow/tfjs-backend-cpu": "^3.6.0",
+    "@tensorflow-models/posenet": "2.2.2",
+    "@tensorflow-models/coco-ssd": "2.2.2",
+    "web-vitals": "^2.1.2",
+    "autoprefixer": "^10.4.0",
+    "tailwindcss": "^3.0.1",
+    "postcss": "^8.4.5",
+    "timers": "^0.1.1",
+    "util": "^0.12.5",
+    "ml5": "^0.12.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -36,8 +49,5 @@
     ]
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.0",
-    "postcss": "^8.4.5",
-    "tailwindcss": "^3.0.1"
   }
 }
