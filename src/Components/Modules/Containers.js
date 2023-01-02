@@ -32,7 +32,6 @@ export class Section extends React.Component {
 
         // Combine default styles with user-defined styles
         const Styles = new Style(`
-            min-height: 10vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -40,13 +39,13 @@ export class Section extends React.Component {
 
         // Combine default classes with user-defined classes
         const Classes = `
-            ${this.props.class ? this.props.class.toString() : ""}
+            ${this.props.classes ? this.props.classes.toString() : ""}
         `;
 
         // Return the component
         return (
             <>
-                <section class={Classes} style={Styles} children={this.props.children} id={this.props.id} />
+                <section className={Classes} style={Styles} children={this.props.children} id={this.props.id} />
             </>
         );
     }
@@ -58,7 +57,6 @@ export class Header extends React.Component {
 
         // Combine default styles with user-defined styles
         const Styles = new Style(`
-            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -66,13 +64,13 @@ export class Header extends React.Component {
 
         // Combine default classes with user-defined classes
         const Classes = `
-            ${this.props.class ? this.props.class.toString() : ""}
+            ${this.props.classes ? this.props.classes.toString() : ""}
         `;
 
         // Return the component
         return (
             <>
-                <header class={Classes} style={Styles} children={this.props.children} id={this.props.id} />
+                <header className={Classes} style={Styles} children={this.props.children} id={this.props.id} />
             </>
         );
     }
@@ -88,13 +86,13 @@ export class Wrapper extends React.Component {
 
         // Combine default classes with user-defined classes
         const Classes = `
-            ${this.props.class ? this.props.class.toString() : ""}
+            ${this.props.classes ? this.props.classes.toString() : ""}
         `;
 
         // Return the component
         return (
             <>
-                <div class={Classes} style={Styles} children={this.props.children} id={this.props.id}/>
+                <div className={Classes} style={Styles} children={this.props.children} id={this.props.id}/>
             </>
         );
     }

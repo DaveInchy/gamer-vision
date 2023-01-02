@@ -1,9 +1,12 @@
 import React from 'react';
 
 import Style from '../Components/Classes/Style.js';
-import Divider, { Container, Section } from '../Components/Modules/Containers.js';
-import Stream from '../Components/Stream.js';
+import Divider, { Container, Header, Section } from '../Components/Modules/Containers.js';
+import Navbar from '../Components/Navbar.js';
+import MonitorStream from '../Components/MonitorStream.js';
 
+// Configuration file
+import Config from './Config.js';
 export default class App extends React.Component {
 
     /* [CHANGES] last updated on: 1st of January 2023
@@ -31,22 +34,9 @@ export default class App extends React.Component {
         `;
 
         return (
-            <Divider class={Classes} style={Styles}>
-                <Section class={``}>
-                    {/* Add a header/navbar to switch app pages */}
-                </Section>
+            <Divider classes={Classes} style={Styles}>
 
-                {/*
-                <Section class={''}>
-                    <Container>
-                        <h1 className={'text-center font-sans'}>AI vision for Gamers or Bots</h1>
-                    </Container>
-                </Section>
-                */}
-
-                <Stream onSuccess={async ({ canvasElement, videoElement, mediaStream }) => {
-                    return true ? false : true;
-                }}/>
+                <MonitorStream />
 
             </Divider>
         );

@@ -24,6 +24,7 @@ export default class Button extends React.Component {
     render() {
 
         const Styles = new Style(`
+            font-size: 26px;
         `, this.styles);
 
         // Combine default classes with user-defined classes
