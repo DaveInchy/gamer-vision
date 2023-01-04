@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-loop-func */
 
-import * as ml5 from 'ml5';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+
+import * as ml5 from 'ml5';
 import Style from './Classes/Style';
+
 import Div, { Header, Wrapper, Container, Section } from './Modules/Containers';
 import Button from './Modules/Buttons';
 import Icons from './Modules/Icons';
@@ -64,29 +66,82 @@ const Component = () => {
             canvas.height = video.videoHeight * scale;
 
             // unloaded models.
-            let objModel = null;
+            var objModel = null;
 
-            let animationFrameId = null;
+            var animationFrameId = null;
 
             // Set up the frame rate and time for each frame
-            let frameRate = 30;
-            let frameTime = 1000 / frameRate;
+            var frameRate = 30;
+            var frameTime = 1000 / frameRate;
 
             // Set up variables to store the timestamp of the last frame and the current FPS
-            let lastFrameTime = 0;
-            let currentFPS = 0;
+            var lastFrameTime = 0;
+            var currentFPS = 0;
 
             // Set up a counter variable to track the number of frames that have been drawn
-            let frameCounter = 0;
+            var frameCounter = 0;
 
             // Set up a flag variable to track whether the detection is currently running
-            let running = false;
+            var running = false;
 
             // Set up an array to store the bounding boxes of the detected objects
-            let bFrames = [];
+            var bFrames = [];
 
             // Set up an array to store the bounding boxes of the detected personas
-            let pBoxes = [];
+            var pCacheExample = [
+                {
+                    layer: 0,
+                    data: {},
+                },
+                {
+                    layer: 1,
+
+                    data: {},
+                },
+                {
+                    layer: 2,
+
+                    data: {},
+                },
+                {
+                    layer: 3,
+
+                    data: {},
+                },
+                {
+                    layer: 4,
+
+                    data: {},
+                },
+                {
+                    layer: 5,
+
+                    data: {},
+                },
+                {
+                    layer: 6,
+
+                    data: {},
+                },
+                {
+                    layer: 7,
+
+                    data: {},
+                },
+                {
+                    layer: 8,
+
+                    data: {},
+                },
+                {
+                    layer: 9,
+
+                    data: {},
+                }
+            ]
+
+            var avgFrameSets = [];
+            var avgPersonas = null;
 
             // Use LowerCase to filter out non required dependencies
             let blackListLabels = [
@@ -106,13 +161,13 @@ const Component = () => {
             const getStartY = () => Number(0);
             const getEndY = () => Math.floor(video.videoHeight * scale)
 
-            let xPositions = {
+            const xPositions = {
                 left: () => (getStartX() + (100 * scale)),
                 center: () => getCenterX(),
                 right: () => (getEndX() - (100 * scale)),
             };
 
-            let yPositions = {
+            const yPositions = {
                 top: () => (getStartY() + (100 * scale)),
                 middle: () => getCenterY(),
                 bottom: () => (getEndY() - (100 * scale)),
@@ -182,6 +237,8 @@ const Component = () => {
                     });
                 }
 
+                let pPerFrame = [];
+                let nineFrames = [];
                 if (bFrames !== null) {
                     bFrames.forEach((box, i, a) => {
                         try {
@@ -209,10 +266,113 @@ const Component = () => {
                             ctx.textBaseline = "middle";
                             ctx.fillText(`${box.label} (${Number(box.confidence * 100).toFixed(0)}%)`, box.x + box.width / 2, box.y + box.height / 2);
 
+                            pPerFrame.push(box);
+
                         } catch (err) {
                             console.log(err);
                         }
                     });
+
+
+                    // make a 2d cache for all the personas in the last 9 frames,
+                    // @todo Calculate avarage location and center of the personas after 9 frames;
+                    let personas = pPerFrame;
+                    if ( nineFrames.push(personas) >= 9 ) {
+
+                        var frameSets = nineFrames.map((frame, setID, set) => {
+                            return {
+                                id: Number(setID * Math.random()).toString().replace(".", ""),
+                                stack: [
+                                    set[setID - 0].map(v => v), // 9
+                                    set[setID - 1].map(v => v), // 8
+                                    set[setID - 2].map(v => v), // 7
+                                    set[setID - 3].map(v => v), // 6
+                                    set[setID - 4].map(v => v), // 5
+                                    set[setID - 5].map(v => v), // 4
+                                    set[setID - 6].map(v => v), // 3
+                                    set[setID - 7].map(v => v), // 2
+                                    set[setID - 8].map(v => v), // 1
+                                    set[setID - 9].map(v => v), // 0
+                                ],
+                                // avgPersonasSets: [
+                                //     set[setID - 0].map(persona, personaID, pSet =>  {
+                                //         return {
+                                //             x: ((pSet[personaID - 9].x +pSet[personaID - 8].x +pSet[personaID - 7].x +pSet[personaID - 6].x +pSet[personaID - 5].x +pSet[personaID - 4].x +pSet[personaID - 3].x +pSet[personaID - 2].x +pSet[personaID - 1].x +pSet[personaID - 0].x) / pSet.length),
+                                //             y: ((pSet[personaID - 9].y +pSet[personaID - 8].y +pSet[personaID - 7].y +pSet[personaID - 6].y +pSet[personaID - 5].y +pSet[personaID - 4].y +pSet[personaID - 3].y +pSet[personaID - 2].y +pSet[personaID - 1].y +pSet[personaID - 0].y) / pSet.length),
+                                //             width: persona.width,
+                                //             height: persona.height,
+                                //         }
+                                //     })
+                                // ]
+                            }
+                        })
+
+                        var depth = avgFrameSets.push(frameSets);
+                        var current = avgFrameSets[depth]
+                            avgFrameSets.shift();
+                            nineFrames = [];
+
+                        avgPersonas = current.map(set => {
+                            let x = 0;
+                            let y = 0;
+                            let width = 0;
+                            let height = 0;
+                            const divideBy = set.stack.length;
+                            // save the total sums to the variables
+                            for (var ii; ii <= set.stack.length; ii++) {
+                                var box = set.stack[ii];
+                                x = x + box.x;
+                                y = y + box.y;
+                                width = width + box.width;
+                                height = height + box.height;
+                            }
+
+                            // return a object with frame location from the total sum divided by the size of the avarage;
+                            return {
+                                x: x / divideBy,
+                                y: y / divideBy,
+                                width: width / divideBy,
+                                height: height / divideBy,
+                            }
+                        })
+                    }
+
+                    if (avgPersonas !== null){
+                        avgPersonas.forEach((box, i, a) => {
+                            try {
+                                if (blackListLabels.includes(box.label.toLowerCase())) {
+                                    return;
+                                }
+
+                                //use a image (whole image) cassifier to classify the bFrames extra to what is already detected;
+
+                                // Set the stroke style to a random color
+                                ctx.strokeStyle = "#90F";
+
+                                // Set the line width to a random value between 4 and 8
+                                ctx.lineWidth = 2;
+
+                                // Draw the bounding box
+                                ctx.beginPath();
+                                ctx.rect(box.x, box.y, box.width, box.height);
+                                ctx.stroke();
+
+                                // Draw the label text
+                                ctx.fillStyle = "#90F";
+                                ctx.font = "24px monospace";
+                                ctx.textAlign = "center";
+                                ctx.textBaseline = "middle";
+                                ctx.fillText(`${box.label}`, box.x + box.width / 2, (box.y + box.height / 2) - 50);
+                                ctx.fillText(`○`, box.x + box.width / 2, box.y + box.height / 2);
+
+                                pPerFrame.push(box);
+
+                            } catch (err) {
+                                console.log(err);
+                            }
+                        });
+                    }
+
                 }
 
                 // Calculate the elapsed time since the last frame
@@ -224,12 +384,18 @@ const Component = () => {
 
                 //plzz dont leak ?!
                 // LOL -> this in theory should keep it a smooth operation, maybe use an avarage instead of the realtime value.
-                const targerFPS = 30
+                const targerFPS = 30;
+                const targetLatency = (1000 / targerFPS) / 10;
+
                 if (scale <= initialScale) {
 
-                    if (currentFPS <= targerFPS || latency >= 20) {
-                        setScale(scale - 0.01);
+                    if (currentFPS <= targerFPS) {
+                        setScale(scale - 0.05);
                     } else if (currentFPS > targerFPS) {
+                        setScale(scale + 0.01);
+                    } else if (latency >= targetLatency) {
+                        setScale(scale - 0.05);
+                    } else if (latency < targetLatency) {
                         setScale(scale + 0.01);
                     }
 
@@ -255,8 +421,6 @@ const Component = () => {
                 ctx.fillStyle = "#0F0";
                 ctx.fillText(`COUNT: ${Number(bFrames?.length)}`, xPositions["left"](), yPositions["bottom"](), video.videoWidth * scale, video.videoHeight * scale);
                 ctx.fillText(`SCALE: ${scale}`, xPositions["left"](), yPositions["bottom"]() - (50*scale), video.videoWidth * scale, video.videoHeight * scale);
-
-
 
                 // Update the frame counter
                 frameCounter++;
@@ -403,26 +567,26 @@ const Component = () => {
                     </video>
                 </div>
 
-                <div className={"absolute top-0 left-0 w-[100%] h-[100%] flex flex-row justify-start items-end"}>
+                <div className={"absolute top-0 left-0 w-[100%] h-[100%] flex flex-row justify-between items-end"}>
 
-                    <div className={`flex flex-row justify-center items-center`}>
+                    <div className={`flex flex-row justify-start items-center w-[35%]`}>
                         <Button ref={btnOpen} title={<Icons.Stream.Offline/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("open")} />
                     </div>
 
                     { rState ?
                         (
-                            <div className={`flex flex-row justify-center items-center`}>
+                            <div className={`flex flex-row justify-center items-center w-[30%]`}>
                                 <Button ref={btnPlay} title={<Icons.Media.Play/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("play")} disabled={false} />
                                 <Button ref={btnStop} title={<Icons.Media.Stop/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("stop")} disabled={true} />
                             </div>
                         ) : (
-                            <div className={`flex flex-row justify-center items-center`}>
+                            <div className={`flex flex-row justify-center items-center w-[30%]`}>
                                 {/* */}
                             </div>
                         )
                     }
 
-                    <div className={`flex flex-row justify-center items-center`}>
+                    <div className={`flex flex-row justify-end items-center w-[35%]`}>
                         <Button title={<Icons.Signs.Info/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => false} disabled={false} />
                     </div>
 
