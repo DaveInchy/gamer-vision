@@ -9,12 +9,12 @@ export class Container extends React.Component {
         const Styles = new Style(`
             display: block;
             position: relative;
-        `, this.props.style);
+        `, this.props.styles);
 
         // Combine default classes with user-defined classes
         const Classes = `
             flex container
-            ${this.props.class ? this.props.class.toString() : ""}
+            ${this.props.classes ? this.props.classes.toString() : ""}
         `;
 
         // Return the component
@@ -35,7 +35,7 @@ export class Section extends React.Component {
             display: flex;
             justify-content: center;
             align-items: center;
-        `, this.props.style);
+        `, this.props.styles);
 
         // Combine default classes with user-defined classes
         const Classes = `
@@ -60,7 +60,7 @@ export class Header extends React.Component {
             display: flex;
             justify-content: center;
             align-items: center;
-        `, this.props.style);
+        `, this.props.styles);
 
         // Combine default classes with user-defined classes
         const Classes = `
@@ -82,7 +82,7 @@ export class Wrapper extends React.Component {
 
         // Combine default styles with user-defined styles
         const Styles = new Style(`
-        `, this.props.style);
+        `, this.props.styles);
 
         // Combine default classes with user-defined classes
         const Classes = `

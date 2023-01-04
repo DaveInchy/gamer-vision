@@ -29,12 +29,12 @@ export default class App extends React.Component {
 
         // Combine default classes with user-defined classes
         const Classes = `
-            bg-dark text-light
+            bg-black text-white
             min-h-screen
         `;
 
         return (
-            <Divider classes={Classes} style={Styles}>
+            <Divider classes={Classes} styles={Styles}>
 
                 <MonitorStream />
 
