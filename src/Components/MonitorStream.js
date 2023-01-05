@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-loop-func */
 
@@ -10,11 +11,30 @@ import Div, { Header, Wrapper, Container, Section } from './Modules/Containers';
 import Button from './Modules/Buttons';
 import Icons from './Modules/Icons';
 
-const MessageBox = ({ active, text, type, style }) => (
-    <div className={`w-full py-4 px-4 my-4 text-[16px] ${style?style.toString():"bg-stone-900 text-stone-200"} rounded-md font-extralight ${active?"":"hidden"}`} role="alert">
-        <span className="font-bold">{type?type.toString():"example"}</span>: {text?text.toString():"this is a message box."}
-    </div>
-);
+const MessageBox = ({ active, text, type, style }) => {
+
+    const box = useRef(HTMLDivElement);
+    const [isActive, setActive] = useState(active)
+
+    function close(e) {
+        var self = box.current;
+        var section = self.parentElement;
+        section.className = section.className.replace("z-20", " ");
+        setActive(false);
+        return;
+    }
+
+    return (
+        <div ref={box} className={`w-full px-4 py-4 my-4 text-[16px] ${style?style.toString():"bg-stone-900 text-stone-200"} rounded-md font-extralight ${isActive?"":"hidden"}`} role="alert">
+            <div className={`relative top-0 left-0 flex flex-col justify-center items-start`}>
+                <span className="font-bold">{type?type.toString():"example"}:</span>{text?text.toString():"this is a message box."}
+            </div>
+            <div className={`relative top-0 left-0 flex flex-col justify-center items-start`}>
+                <Button title={<Icons.Actions.Cross/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={close} disabled={false} />
+            </div>
+        </div>
+    )
+};
 
 const Component = () => {
 
@@ -38,6 +58,7 @@ const Component = () => {
 
     const [status, setStatus] = useState(undefined);
     const [rState, setRenderState] = useState(false);
+    const [infoActive, setInfoActive] = useState(false);
 
     const initialScale = 0.75;
     const [scale, setScale] = useState(initialScale); // 0.7 on WoW ~24fps //
@@ -45,9 +66,11 @@ const Component = () => {
     const videoElem = useRef(HTMLVideoElement);
     const canvasElem = useRef(HTMLCanvasElement);
     const canvasContext = useRef(CanvasRenderingContext2D);
+    const infoSection = useRef(Section)
 
     const btnOpen = useRef(Button);
     const btnClose = useRef(Button);
+    const btnInfo = useRef(Button);
 
     const btnStop = useRef(Button);
     const btnPlay = useRef(Button);
@@ -87,58 +110,6 @@ const Component = () => {
             // Set up an array to store the bounding boxes of the detected objects
             var bFrames = [];
 
-            // Set up an array to store the bounding boxes of the detected personas
-            var pCacheExample = [
-                {
-                    layer: 0,
-                    data: {},
-                },
-                {
-                    layer: 1,
-
-                    data: {},
-                },
-                {
-                    layer: 2,
-
-                    data: {},
-                },
-                {
-                    layer: 3,
-
-                    data: {},
-                },
-                {
-                    layer: 4,
-
-                    data: {},
-                },
-                {
-                    layer: 5,
-
-                    data: {},
-                },
-                {
-                    layer: 6,
-
-                    data: {},
-                },
-                {
-                    layer: 7,
-
-                    data: {},
-                },
-                {
-                    layer: 8,
-
-                    data: {},
-                },
-                {
-                    layer: 9,
-
-                    data: {},
-                }
-            ]
 
             var avgFrameSets = [];
             var avgPersonas = null;
@@ -469,7 +440,7 @@ const Component = () => {
                             cancelAnimationFrame(animationFrameId);
                         });
 
-                        btnOpen.current.title = <Icons.Stream.Online/>;
+                        btnOpen.current.title = <Icons.Media.Video.Online/>;
                         setRenderState(true);
 
                     } catch(e) {
@@ -556,7 +527,16 @@ const Component = () => {
                 </div>
             </Section>
 
-            <Section classes={"absolute top-0 left-0 w-[100vw] h-[100vh]"}>
+            <MessageBox ref={infoSection} active={infoActive} type={"About The Project"} text={`
+                This app is authored by dave <daveinchy@github.com>,\n
+                The license for this software is solely meant for this product only.\n
+                Everyone is free to share and distribute code. however you are not\n
+                allowed to sell it or license it in any kind of monetary or comercial way that is not allowed through the author of this software.\n
+                You are not allowed to change to original author any where in this code.\n
+                If you add onto this project then author that part only, add yourself as contributor with the original author also stated.\n
+            `} style={`bg-primary text-light max-w-[350px] justify-self-center`}/>
+
+            <Section classes={"absolute top-0 left-0 w-[100vw] h-[100vh] z-10"}>
 
                 <div className={"absolute top-0 left-0 w-[100%] h-[100%] flex flex-col justify-center items-center"}>
                     <canvas id="feed" className={canvasClasses + " "} ref={canvasElem}>
@@ -570,11 +550,11 @@ const Component = () => {
                 <div className={"absolute top-0 left-0 w-[100%] h-[100%] flex flex-row justify-between items-end"}>
 
                     <div className={`flex flex-row justify-start items-center w-[35%]`}>
-                        <Button ref={btnOpen} title={<Icons.Stream.Offline/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("open")} />
+                        <Button ref={btnOpen} title={<Icons.Media.Video.Offline/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("open")} />
                     </div>
 
-                    { rState ?
-                        (
+                    {
+                        rState ? (
                             <div className={`flex flex-row justify-center items-center w-[30%]`}>
                                 <Button ref={btnPlay} title={<Icons.Media.Play/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("play")} disabled={false} />
                                 <Button ref={btnStop} title={<Icons.Media.Stop/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("stop")} disabled={true} />
@@ -587,7 +567,15 @@ const Component = () => {
                     }
 
                     <div className={`flex flex-row justify-end items-center w-[35%]`}>
-                        <Button title={<Icons.Signs.Info/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => false} disabled={false} />
+                        <Button ref={btnInfo} title={<Icons.Signs.Info/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => {
+                            if (infoActive) {
+                                setInfoActive(false)
+                            } else {
+                                var section = infoSection.current;
+                                section.style = section.style + "z-20";
+                                setInfoActive(true)
+                            }
+                        }} disabled={false} />
                     </div>
 
                 </div>

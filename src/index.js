@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import App from './Application/App.js';
-import './index.css';
+import './Assets/index.css';
 
 // Content container
 const RootContainer = document.getElementById('root');

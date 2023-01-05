@@ -1,0 +1,27 @@
+{
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*"
+  ],
+  "compilerOptions": {
+
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2020",
+    "allowJs": true,
+    "checkJs": true,
+    "jsx": "react",
+    "strictNullChecks": false,
+    "strictFunctionTypes": true,
+    "noEmit": true,
+
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "strict": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
+  }
+}

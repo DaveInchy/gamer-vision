@@ -1,12 +1,10 @@
 import React from 'react';
 
 import Style from '../Components/Classes/Style.js';
-import Divider, { Container, Header, Section } from '../Components/Modules/Containers.js';
-import Navbar from '../Components/Navbar.js';
+import Divider, {  } from '../Components/Modules/Containers.js';
 import MonitorStream from '../Components/MonitorStream.js';
 
 // Configuration file
-import Config from './Config.js';
 export default class App extends React.Component {
 
     /* [CHANGES] last updated on: 1st of January 2023
