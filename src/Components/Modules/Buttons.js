@@ -5,6 +5,9 @@ export default class Button extends React.Component {
 
     title = "A Button";
 
+    /**
+     * @param {any} props
+     */
     constructor(
         props
     ) {
@@ -34,7 +37,9 @@ export default class Button extends React.Component {
         `;
 
         return (
-            <button disabled={this.disabled} className={Classes} style={Styles} onClick={this.action}>
+            <button disabled={this.disabled} className={Classes}
+            // @ts-ignore
+            style={Styles} onClick={this.action}>
                 {this.title}
             </button>
         );

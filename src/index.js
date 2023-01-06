@@ -1,7 +1,8 @@
+// @ts-nocheck
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import App from './Application/App.js';
+import App from './Application/App';
 import './Assets/index.css';
 
 // Content container
@@ -18,7 +19,7 @@ const RootStructure = (
 ReactDOM.render( RootStructure, RootContainer );
 
 // Performance monitoring
-const reportWebVitals = onPerfEntry => {
+const reportWebVitals = (onPerfEntry) => {
   if (onPerfEntry && onPerfEntry instanceof Function) {
     import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
       getCLS(onPerfEntry);

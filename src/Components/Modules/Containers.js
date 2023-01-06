@@ -9,7 +9,8 @@ export class Container extends React.Component {
         const Styles = new Style(`
             display: block;
             position: relative;
-        `, this.props.styles);
+            ${this.props.styles === typeof Style?this.props.styles.toString():this.props.styles}
+        `);
 
         // Combine default classes with user-defined classes
         const Classes = `
@@ -18,11 +19,8 @@ export class Container extends React.Component {
         `;
 
         // Return the component
-        return (
-            <>
-                <div class={Classes} style={Styles} children={this.props.children} id={this.props.id} />
-            </>
-        );
+        // @ts-ignore
+        return (<div className={Classes} style={Styles} children={this.props.children} id={this.props.id} />);
     }
 }
 
@@ -33,9 +31,11 @@ export class Section extends React.Component {
         // Combine default styles with user-defined styles
         const Styles = new Style(`
             display: flex;
-            justify-content: center;
-            align-items: center;
-        `, this.props.styles);
+            ${this.props.styles === typeof Style?this.props.styles.toString():this.props.styles}
+        `, {
+            alignItems: "center",
+            justifyContent: "center",
+        });
 
         // Combine default classes with user-defined classes
         const Classes = `
@@ -43,11 +43,8 @@ export class Section extends React.Component {
         `;
 
         // Return the component
-        return (
-            <>
-                <section className={Classes} style={Styles} children={this.props.children} id={this.props.id} />
-            </>
-        );
+        // @ts-ignore
+        return (<section className={Classes} style={Styles} children={this.props.children} id={this.props.id} />);
     }
 }
 
@@ -58,9 +55,11 @@ export class Header extends React.Component {
         // Combine default styles with user-defined styles
         const Styles = new Style(`
             display: flex;
-            justify-content: center;
-            align-items: center;
-        `, this.props.styles);
+            ${this.props.styles === typeof Style?this.props.styles.toString():this.props.styles}
+        `,{
+            alignItems: "center",
+            justifyContent: "center",
+        });
 
         // Combine default classes with user-defined classes
         const Classes = `
@@ -68,11 +67,8 @@ export class Header extends React.Component {
         `;
 
         // Return the component
-        return (
-            <>
-                <header className={Classes} style={Styles} children={this.props.children} id={this.props.id} />
-            </>
-        );
+        // @ts-ignore
+        return (<header className={Classes} style={Styles} children={this.props.children} id={this.props.id} />);
     }
 }
 
@@ -82,7 +78,8 @@ export class Wrapper extends React.Component {
 
         // Combine default styles with user-defined styles
         const Styles = new Style(`
-        `, this.props.styles);
+            ${this.props.styles === typeof Style?this.props.styles.toString():this.props.styles}
+        `);
 
         // Combine default classes with user-defined classes
         const Classes = `
@@ -90,11 +87,8 @@ export class Wrapper extends React.Component {
         `;
 
         // Return the component
-        return (
-            <>
-                <div className={Classes} style={Styles} children={this.props.children} id={this.props.id}/>
-            </>
-        );
+        // @ts-ignore
+        return (<div className={Classes} style={Styles} children={this.props.children} id={this.props.id}/>);
     }
 }
 

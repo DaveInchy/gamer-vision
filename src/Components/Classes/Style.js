@@ -1,3 +1,4 @@
+// @ts-nocheck
 //converts a css string with code to a react Stylesheet object
 export default class Style {
   constructor(str, obj = {}) {

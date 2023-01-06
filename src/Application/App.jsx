@@ -1,11 +1,11 @@
 import React from 'react';
 
 import Style from '../Components/Classes/Style.js';
-import Divider, {  } from '../Components/Modules/Containers.js';
-import MonitorStream from '../Components/MonitorStream.js';
+import Wrapper from '../Components/Modules/Containers';
+import MonitorStream from '../Components/MonitorStream';
 
 // Configuration file
-export default class App extends React.Component {
+const App = () => {
 
     /* [CHANGES] last updated on: 1st of January 2023
      * - Added implementation of an YOLO object detector.
@@ -17,26 +17,24 @@ export default class App extends React.Component {
      * - Add a way to detect poses for a object thats labeled "Person".
      * - Performance upgrades for async rendering of data collected by AI models.
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    // Combine default styles with user-defined styles
+    const Styles = new Style(`
+        font-weight: bold;
+    `, {});
 
-    render() {
+    // Combine default classes with user-defined classes
+    const Classes = `
+        bg-black text-white
+        min-h-screen
+    `;
 
-        // Combine default styles with user-defined styles
-        const Styles = new Style(`
-            font-weight: bold;
-        `, {});
+    return (
+        <Wrapper classes={Classes} styles={Styles}>
 
-        // Combine default classes with user-defined classes
-        const Classes = `
-            bg-black text-white
-            min-h-screen
-        `;
+            <MonitorStream />
 
-        return (
-            <Divider classes={Classes} styles={Styles}>
-
-                <MonitorStream />
-
-            </Divider>
-        );
-    }
+        </Wrapper>
+    )
 }
+
+export default App;

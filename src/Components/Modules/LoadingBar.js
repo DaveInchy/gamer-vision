@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 
 const LoadingBar = ({ active, progress = 1, started = true, styles = "", ended = false }) => {
