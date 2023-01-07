@@ -1,6 +1,6 @@
+// @ts-nocheck
 import React from 'react';
-
-import Style from '../Components/Classes/Style.js';
+import Style from '../Components/Classes/Style';
 import Wrapper from '../Components/Modules/Containers';
 import MonitorStream from '../Components/MonitorStream';
 

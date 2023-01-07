@@ -13,14 +13,16 @@ import Div, { Header, Wrapper, Container, Section } from './Modules/Containers';
 import Button from './Modules/Buttons';
 import Icons from './Modules/Icons';
 
-const MessageBox = ({ active, text, type, style }) => (
-    <div className={`w-full px-4 py-4 my-4 ${style?style.toString():"bg-stone-900 text-stone-200"} text-[24px] font-extralight rounded-sm ${active?"":"hidden"}`} role="alert">
-        <span className="font-bold uppercase">{type?type.toString():"example"}: </span>
-        {text?text.toString():"this is a message box."}
+const MessageBox: JSX.Element = ({ active, text, type, style }): JSX.Element => (
+    <div className={`w-full px-4 py-4 my-4 ${style || "bg-stone-900 text-stone-200"} text-[16px] font-extralight rounded-sm ${active ||  "hidden"}`} role="alert">
+        <span className="font-bold uppercase">{type || "example"}: </span>
+        {text || "this is a message box."}
     </div>
 )
 
-const Component = () => {
+const Component = (): JSX.Element => {
+
+    const initialScale = 1;
 
     // HTML Elements
     const videoElem = useRef(HTMLVideoElement);
@@ -41,15 +43,19 @@ const Component = () => {
         style: "bg-stone-900 text-stone-200",
     });
 
+    const [infoBox, setInfoBox] = useState({
+        active: false,
+        type: "Example",
+        text: "Some Default Filler Text for Example...",
+        style: "bg-stone-900 text-stone-200",
+    });
+
+    // Set up state managers
     const [status, setStatus] = useState(undefined);
     const [rState, setRenderState] = useState(false);
-    const [infoActive, setInfoActive] = useState(false);
-
-    const initialScale = 0.75;
-
     const [animationFrameId, setAnimationFrameId] = useState(null);
 
-    // Set up the frame rate and time for each frame
+    // Set up the frame rate and time for each frame (this only works if the render function is called again, so useState dependencies need to include all of these values or another call must be made throught only one of the dependencies)
     const [frameRate, setFrameRate] = useState(30);
     const [frameTime, setFrameTime] = useState(0);
     const [frameCount, setFrameCount] = useState(0);
@@ -134,7 +140,7 @@ const Component = () => {
 
                     res();
 
-                } catch(e) {
+                } catch (e) {
 
                     rej(`${e}`);
 
@@ -147,7 +153,7 @@ const Component = () => {
                 canvas.width = video.videoWidth * scale;
                 canvas.height = video.videoHeight * scale;
 
-                function drawStats(latency, fps) {
+                function drawStats(latency, fps, frameTime) {
 
                     // Draw the FPS and LATENCY at the top left
                     ctx.textAlign = "left";
@@ -156,6 +162,7 @@ const Component = () => {
                     ctx.fillStyle = "#0F0";
                     ctx.fillText(`FPS: ${fps}`, xPositions["left"](), yPositions["top"](), video.videoWidth * scale, video.videoHeight * scale);
                     ctx.fillText(`LATENCY: ${Number(latency).toFixed(2)}`, xPositions["left"](), yPositions["top"]() + (50 * scale), video.videoWidth * scale, video.videoHeight * scale);
+                    ctx.fillText(`GPU/CPU: ${Number(frameTime)}`, xPositions["left"](), yPositions["top"]() + (100 * scale), video.videoWidth * scale, video.videoHeight * scale);
 
                     // Draw other data at the bottom left
                     ctx.textAlign = "left";
@@ -167,10 +174,10 @@ const Component = () => {
 
                 }
 
-                function perfUtils(latency, fps) {
+                function perfUtils(latency, fps, frameTime) {
 
                     // this in theory should keep it a smooth operation, maybe use an avarage instead of the realtime value.
-                    const targerFPS = 66;
+                    const targerFPS = 10; // 10 fps is rougly on a (12 thread) 6 core machine although i still dont know if the gpu or cpu is used as backend worker. in the GPU's case this is a 2060 super so performace is shit period
                     const targetLatency = (1000 / targerFPS) / 10;
 
                     if (scale < initialScale) {
@@ -257,7 +264,7 @@ const Component = () => {
 
                     // make a 2d cache for all the personas in the last 9 frames,
                     // @todo Calculate avarage location and center of the personas after 9 frames;
-                    if (nineFrames.push(pPerFrame) >= 9 ) {
+                    if (nineFrames.push(pPerFrame) >= 9) {
 
                         // var frameSets = nineFrames.map((frame, setID, set) => {
                         //     return {
@@ -328,7 +335,7 @@ const Component = () => {
                         nineFrames = [];
                     }
 
-                    if (avgPersonas !== null){
+                    if (avgPersonas !== null) {
                         avgPersonas.forEach((box, i, a) => {
                             try {
                                 //use a image (whole image) cassifier to classify the bFrames extra to what is already detected;
@@ -361,17 +368,17 @@ const Component = () => {
                 }
 
                 // Calculate the elapsed time since the last frame
-                let elapsedTime = timestamp - lastFrameTime;
-                let latency = elapsedTime / 10;
-                fps = Math.round(1000 / elapsedTime);
+                let frameTime = timestamp - lastFrameTime;
+                let latency = frameTime / 10;
+                fps = Math.round(1000 / frameTime);
 
                 // Update the FPS
                 setFrameRate(fps);
                 setFrameTime(1000 / fps);
 
                 // Some important executions that are way better off in their own function block.
-                drawStats(latency, fps);
-                perfUtils(latency, fps)
+                drawStats(latency, fps, frameTime);
+                perfUtils(latency, fps, frameTime);
 
                 // Update the timestamp of the last frame
                 lastFrameTime = timestamp;
@@ -382,6 +389,47 @@ const Component = () => {
                 // Request the next animation frame
                 setAnimationFrameId(requestAnimationFrame(draw));
             }
+
+            const InfoText: JSX.Element = () => {
+
+                return (<>
+                    <br />
+                    This open-source demo is authored by Dave Inchy (<a href={"https://github.com/daveinchy/gamer-vision"}>https://github.com/daveinchy</a>)<br />
+                    <br />
+                    Im working on this demo to demonstrate that javascript can be usefull with tensorflow.js.<br />
+                    I've tried to make my algorithm as performant as possible, however you can clearly notice that javascript is way behind on python and its ability to use AI models that are way more accurate without losing performance.<br />
+                    It should also demonstrate that we can detect objects in (games or) anything on screen.We stream the user's selected monitor/window to a hidden shadow canvas (clear and without our drawn boxes, labels & accuracy) so we can use that as input for the AI Models, and then copy that stream to a canvas so we can render visuals on top of the original stream.<br />
+                    <br />
+                    I don't recommend trying this on your phone - This demo has been developed on PC with 12 Cores and a RTX 2060 super, so your results might be a lot different.<br />
+                    <br />
+                    <span className={"font-semibold"}>Tech Stack:</span>
+                    <ul>
+                        <li>• TensorflowJS used by ML5.js</li>
+                        <li>• CocoSSD image set and the object detection model</li>
+                        <li>• ReactJS + TailwindCSS</li>
+                    </ul>
+                    <br/>
+                    More tech is being added as I develop this demo.
+                </>)
+            }
+                ;
+
+            if (status === "infoOn") {
+                setInfoBox({
+                    active: true,
+                    text: <InfoText />,
+                    type: "🚀 Thanks for checking out my demo ❤️",
+                    style: `bg-primary text-light max-w-[50vw] mx-auto z-30`,
+                })
+            } else {
+                setInfoBox({
+                    active: false,
+                    text: `👌`,
+                    type: "❤️",
+                    style: "z-0",
+                })
+            }
+
 
             if (status === "open") {
 
@@ -422,10 +470,10 @@ const Component = () => {
                             cancelAnimationFrame(animationFrameId);
                         });
 
-                        btnOpen.current.title = <Icons.Media.Video.Online strokeColor={"#eee"} strokeWidth={1.5} iconSize={"26"} fillColor={"none"}/>;
+                        btnOpen.current.title = <Icons.Media.Video.Online strokeColor={"#eee"} strokeWidth={1.95} iconSize={"32"} fillColor={"none"} />;
                         setRenderState(true);
 
-                    } catch(e) {
+                    } catch (e) {
                         console.error(`Caught error white setting up MediaStream =>`, `${e}`);
                     }
 
@@ -455,7 +503,7 @@ const Component = () => {
 
                     video.play();
 
-                    btnPlay.current.title = <Icons.Media.Pause strokeColor={"#eee"} strokeWidth={1.5} iconSize={"26"} fillColor={"none"}/>
+                    btnPlay.current.title = <Icons.Media.Pause strokeColor={"#eee"} strokeWidth={1.95} iconSize={"32"} fillColor={"none"} />
                     btnPlay.current.action = () => setStatus("pause");
                     btnPlay.current.disabled = true;
                 }
@@ -471,7 +519,7 @@ const Component = () => {
 
                     video.pause();
 
-                    btnPlay.current.title = <Icons.Media.Play strokeColor={"#eee"} strokeWidth={1.5} iconSize={"26"} fillColor={"none"}/>
+                    btnPlay.current.title = <Icons.Media.Play strokeColor={"#eee"} strokeWidth={1.95} iconSize={"32"} fillColor={"none"} />
                     btnPlay.current.action = () => setStatus("play");
                 }
             }
@@ -503,23 +551,12 @@ const Component = () => {
     return (
         <>
 
-            <Section>
-                <div className={`fixed top-0 left-0 w-[100%] mx-auto px-4 z-20`}>
-                    <MessageBox active={msgBox.active} type={msgBox.type} text={msgBox.text} style={msgBox.style}/>
-                </div>
+            <Section classes={`fixed top-0 left-0 w-[100%] mx-auto px-4 z-30`}>
+                <MessageBox active={msgBox.active} type={msgBox.type} text={msgBox.text} style={msgBox.style} />
             </Section>
 
-            <Section>
-                <div className={`fixed top-0 left-0 w-[100%] mx-auto px-4 z-10`}>
-                    <MessageBox active={infoActive?true:false} type={"More Info"} text={`
-                        This app is authored by dave <daveinchy@github.com>,\n
-                        The license for this software is solely meant for this product only.\n
-                        Everyone is free to share and distribute code. however you are not\n
-                        allowed to sell it or license it in any kind of monetary or comercial way that is not allowed through the author of this software.\n
-                        You are not allowed to change to original author any where in this code.\n
-                        If you add onto this project then author that part only, add yourself as contributor with the original author also stated.\n
-                    `} style={`fixed bg-primary text-light max-w-[350px] self-center justify-self-center z-20`}/>
-                </div>
+            <Section classes={`fixed top-0 left-0 w-[100%] mx-auto px-4 z-10`}>
+                <MessageBox active={infoBox.active} type={infoBox.type} text={infoBox.text} style={infoBox.style} />
             </Section>
 
             <Section classes={"absolute top-0 left-0 w-[100vw] h-[100vh] z-10"}>
@@ -533,34 +570,48 @@ const Component = () => {
                     </video>
                 </div>
 
-                <div className={"absolute top-0 left-0 w-[100%] h-[100%] flex flex-row justify-between items-end"}>
+                <div className={"absolute top-0 left-0 w-[100%] h-[100%]"}>
+                    <div className={"absolute top-0 w-[100%] flex flex-row justify-between items-start"}>
+                        <div className={`w-[45%] flex justify-start items-baseline`}>
+                            <Button title={<Icons.Media.Network.Online strokeColor={"#eee"} strokeWidth={1.95} iconSize={"32"} fillColor={"none"} />} classes={"rounded-none my-6 mx-4 bg-transparent uppercase hover:shadow-2xl hover:translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => false} disabled={false} />
+                        </div>
 
-                    <div className={`flex flex-row justify-start items-center w-[35%]`}>
-                        <Button ref={btnOpen} title={<Icons.Media.Video.Offline strokeColor={"#eee"} strokeWidth={1.5} iconSize={"26"} fillColor={"none"}/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("open")} />
+                        <div className={`w-[45%] flex justify-end items-baseline`}>
+                            <Button title={<Icons.Actions.Menu strokeColor={"#eee"} strokeWidth={1.95} iconSize={"32"} fillColor={"none"} />} classes={"rounded-none my-6 mx-4 bg-transparent uppercase hover:shadow-2xl hover:translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("menu")} />
+                        </div>
                     </div>
 
-                    {
-                        rState ? (
-                            <div className={`flex flex-row justify-center items-center w-[30%]`}>
-                                <Button ref={btnPlay} title={<Icons.Media.Play strokeColor={"#eee"} strokeWidth={1.5} iconSize={"26"} fillColor={"none"}/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("play")} disabled={false} />
-                                <Button ref={btnStop} title={<Icons.Media.Stop strokeColor={"#eee"} strokeWidth={1.5} iconSize={"26"} fillColor={"none"}/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("stop")} disabled={true} />
-                            </div>
-                        ) : (
-                            <div className={`flex flex-row justify-center items-center w-[30%]`}>
-                                {/* */}
-                            </div>
-                        )
-                    }
+                    <div className={"absolute bottom-0 w-[100%] flex flex-row justify-between items-end"}>
+                        <div className={`w-[45%] flex justify-start items-baseline`}>
+                            <Button ref={btnOpen} title={<Icons.Media.Video.Offline strokeColor={"#eee"} strokeWidth={1.95} iconSize={"32"} fillColor={"none"} />} classes={"rounded-none my-6 mx-4 bg-transparent uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("open")} />
 
-                    <div className={`flex flex-row justify-end items-center w-[35%]`}>
-                        <Button ref={btnInfo} title={<Icons.Signs.Info strokeColor={"#eee"} strokeWidth={1.5} iconSize={"26"} fillColor={"none"}/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => {
-                            if (infoActive) {
-                                setInfoActive(false)
-                            } else {
-                                setInfoActive(true)
-                            }
-                        }} disabled={false} />
+                                {(rState &&
+                                    (<>
+                                        <Button ref={btnPlay} title={<Icons.Media.Play strokeColor={"currentColor"} strokeWidth={1.95} iconSize={"32"} fillColor={"none"} />} classes={"rounded-none my-6 mx-4 bg-transparent uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("play")} disabled={false} />
+                                        <Button ref={btnStop} title={<Icons.Media.Stop strokeColor={"currentColor"} strokeWidth={1.95} iconSize={"32"} fillColor={"none"} />} classes={"rounded-none my-6 mx-4 bg-transparent uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("stop")} disabled={true} />
+                                    </>) as JSX.Element
+                                )}
+
+                        </div>
+
+                        <div className={`w-[45%] flex justify-end items-baseline`}>
+                            <Button ref={btnInfo} title={<Icons.Signs.Info strokeColor={"#5b59f7"} strokeWidth={1.95} iconSize={"32"} fillColor={"none"} />} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => infoBox.active === true?setStatus("infoOff"):setStatus("infoOn")} disabled={false} />
+                        </div>
                     </div>
+                </div>
+
+                <div className={"absolute top-0 right-0 h-[100vw] min-h-[100vw] max-h-[100vw] xs:w-[100vw] sm:w-[100vw] md:w-[40vw] lg:w-[20vw] z-20 hidden"} id={"menu-root"}>
+
+                    <Wrapper classes={"w-[100%] h-[100vw] bg-dark p-5"}>
+                        <h1 className={"m-1"}>Menu</h1>
+                        <hr/>
+                        <Button title={"Menu Item 1"} classes={"bg-stone-900 rounded-full text-bold mt-5 w-full outline"} styles={"border: 2px solid white;"} disables={false} action={() => false} />
+                        <Button title={"Menu Item 2"} classes={"bg-stone-900 rounded-full text-bold mt-5 w-full outline"} styles={"border: 2px solid white;"} disables={false} action={() => false} />
+                        <Button title={"Menu Item 3"} classes={"bg-stone-900 rounded-full text-bold mt-5 w-full outline"} styles={"border: 2px solid white;"} disables={false} action={() => false} />
+                        <Button title={"Menu Item 4"} classes={"bg-stone-900 rounded-full text-bold mt-5 w-full outline"} styles={"border: 2px solid white;"} disables={false} action={() => false} />
+                        <Button title={"Menu Item 5"} classes={"bg-stone-900 rounded-full text-bold mt-5 w-full outline"} styles={"border: 2px solid white;"} disables={false} action={() => false} />
+                        <Button title={"Menu Item 6"} classes={"bg-stone-900 rounded-full text-bold mt-5 w-full outline"} styles={"border: 2px solid white;"} disables={false} action={() => false} />
+                    </Wrapper>
 
                 </div>
 

@@ -7,14 +7,12 @@ export class Container extends React.Component {
 
         // Combine default styles with user-defined styles
         const Styles = new Style(`
-            display: block;
-            position: relative;
             ${this.props.styles === typeof Style?this.props.styles.toString():this.props.styles}
         `);
 
         // Combine default classes with user-defined classes
         const Classes = `
-            flex container
+            container overflow-hidden
             ${this.props.classes ? this.props.classes.toString() : ""}
         `;
 
@@ -30,15 +28,12 @@ export class Section extends React.Component {
 
         // Combine default styles with user-defined styles
         const Styles = new Style(`
-            display: flex;
             ${this.props.styles === typeof Style?this.props.styles.toString():this.props.styles}
-        `, {
-            alignItems: "center",
-            justifyContent: "center",
-        });
+        `,);
 
         // Combine default classes with user-defined classes
         const Classes = `
+            flex flex-1 justify-center items-center overflow-hidden
             ${this.props.classes ? this.props.classes.toString() : ""}
         `;
 
@@ -54,15 +49,12 @@ export class Header extends React.Component {
 
         // Combine default styles with user-defined styles
         const Styles = new Style(`
-            display: flex;
             ${this.props.styles === typeof Style?this.props.styles.toString():this.props.styles}
-        `,{
-            alignItems: "center",
-            justifyContent: "center",
-        });
+        `,);
 
         // Combine default classes with user-defined classes
         const Classes = `
+            flex flex-1 justify-center items-center min-h-[80vh] w-full overflow-hidden
             ${this.props.classes ? this.props.classes.toString() : ""}
         `;
 
@@ -83,7 +75,7 @@ export class Wrapper extends React.Component {
 
         // Combine default classes with user-defined classes
         const Classes = `
-            ${this.props.classes ? this.props.classes.toString() : ""}
+            ${this.props.classes ? this.props.classes.toString() : ""} overflow-hidden
         `;
 
         // Return the component

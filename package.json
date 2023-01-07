@@ -1,6 +1,7 @@
 {
-  "name": "gamer-vision-assist",
-  "version": "0.2.1",
+  "name": "gamer-vision",
+  "version": "0.3.1",
+  "stage": "0.3, make UI Components and build teh website with it.",
   "private": true,
   "inactiveDeps": {
     "@tensorflow-models/coco-ssd": "2.2.2",

@@ -1,12 +1,16 @@
 // @ts-nocheck
 //converts a css string with code to a react Stylesheet object
-export default class Style {
-  constructor(str, obj = {}) {
+class Style
+{
+
+  properties: Array;
+
+  constructor(str) {
     var regex = /([\w-]*)\s*:\s*([^;]*)/g;
     var match,
       properties = {};
 
-    str += " " + this.convProps(obj);
+    str += " ";
 
     while ((match = regex.exec(str)))
       properties[match[1]] = match[2].trim();
@@ -40,4 +44,6 @@ export default class Style {
 
     return properties;
   };
-}
+};
+
+export default Style;

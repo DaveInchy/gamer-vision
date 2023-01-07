@@ -27,7 +27,8 @@ export default class Button extends React.Component {
     render() {
 
         const Styles = new Style(`
-        `, this.styles);
+            ${this.styles || ""}
+        `);
 
         // Combine default classes with user-defined classes
         const Classes = `
@@ -37,10 +38,10 @@ export default class Button extends React.Component {
         `;
 
         return (
-            <button disabled={this.disabled} className={Classes}
+            <button disabled={this.disabled || false} className={Classes || ""}
             // @ts-ignore
             style={Styles} onClick={this.action}>
-                {this.title}
+                {this.title || "Button"}
             </button>
         );
     }

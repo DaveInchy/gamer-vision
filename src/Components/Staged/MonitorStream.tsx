@@ -20,7 +20,9 @@ const MessageBox: JSX.Element = ({ active, text, type, style }): JSX.Element => 
     </div>
 )
 
-const Component: JSX.Element = (): JSX.Element => {
+const Component = (): JSX.Element => {
+
+    const initialScale = 1;
 
     // HTML Elements
     const videoElem = useRef(HTMLVideoElement);
@@ -41,15 +43,20 @@ const Component: JSX.Element = (): JSX.Element => {
         style: "bg-stone-900 text-stone-200",
     });
 
+    const [infoBox, setInfoBox] = useState({
+        active: false,
+        type: "Example",
+        text: "Some Default Filler Text for Example...",
+        style: "bg-stone-900 text-stone-200",
+    });
+
+    // Set up state managers
     const [status, setStatus] = useState(undefined);
     const [rState, setRenderState] = useState(false);
     const [infoActive, setInfoActive] = useState(false);
-
-    const initialScale = 0.75;
-
     const [animationFrameId, setAnimationFrameId] = useState(null);
 
-    // Set up the frame rate and time for each frame
+    // Set up the frame rate and time for each frame (this only works if the render function is called again, so useState dependencies need to include all of these values or another call must be made throught only one of the dependencies)
     const [frameRate, setFrameRate] = useState(30);
     const [frameTime, setFrameTime] = useState(0);
     const [frameCount, setFrameCount] = useState(0);
@@ -147,7 +154,7 @@ const Component: JSX.Element = (): JSX.Element => {
                 canvas.width = video.videoWidth * scale;
                 canvas.height = video.videoHeight * scale;
 
-                function drawStats(latency, fps) {
+                function drawStats(latency, fps, frameTime) {
 
                     // Draw the FPS and LATENCY at the top left
                     ctx.textAlign = "left";
@@ -167,10 +174,10 @@ const Component: JSX.Element = (): JSX.Element => {
 
                 }
 
-                function perfUtils(latency, fps) {
+                function perfUtils(latency, fps, frameTime) {
 
                     // this in theory should keep it a smooth operation, maybe use an avarage instead of the realtime value.
-                    const targerFPS = 66;
+                    const targerFPS = 10; // 10 fps is rougly on a (12 thread) 6 core machine although i still dont know if the gpu or cpu is used as backend worker. in the GPU's case this is a 2060 super so performace is shit period
                     const targetLatency = (1000 / targerFPS) / 10;
 
                     if (scale < initialScale) {
@@ -361,17 +368,17 @@ const Component: JSX.Element = (): JSX.Element => {
                 }
 
                 // Calculate the elapsed time since the last frame
-                let elapsedTime = timestamp - lastFrameTime;
-                let latency = elapsedTime / 10;
-                fps = Math.round(1000 / elapsedTime);
+                let frameTime = timestamp - lastFrameTime;
+                let latency = frameTime / 10;
+                fps = Math.round(1000 / frameTime);
 
                 // Update the FPS
                 setFrameRate(fps);
                 setFrameTime(1000 / fps);
 
                 // Some important executions that are way better off in their own function block.
-                drawStats(latency, fps);
-                perfUtils(latency, fps)
+                drawStats(latency, fps, frameTime);
+                perfUtils(latency, fps, frameTime)
 
                 // Update the timestamp of the last frame
                 lastFrameTime = timestamp;
@@ -381,6 +388,22 @@ const Component: JSX.Element = (): JSX.Element => {
 
                 // Request the next animation frame
                 setAnimationFrameId(requestAnimationFrame(draw));
+            }
+
+            if (status === "toggle") {
+
+                setInfoBox({
+                    active: true,
+                    text: `This app is authored by dave <daveinchy@github.com>,\n
+                        The license for this software is solely meant for this product only.\n
+                        Everyone is free to share and distribute code. however you are not\n
+                        allowed to sell it or license it in any kind of monetary or comercial way that is not allowed through the author of this software.\n
+                        You are not allowed to change to original author any where in this code.\n
+                        If you add onto this project then author that part only, add yourself as contributor with the original author also stated.`,
+                    type: "More Info",
+                    style: `fixed bg-primary text-light max-w-[350px] self-center justify-self-center z-20`,
+                });
+
             }
 
             if (status === "open") {
@@ -511,14 +534,7 @@ const Component: JSX.Element = (): JSX.Element => {
 
             <Section>
                 <div className={`fixed top-0 left-0 w-[100%] mx-auto px-4 z-10`}>
-                    <MessageBox active={infoActive?true:false} type={"More Info"} text={`
-                        This app is authored by dave <daveinchy@github.com>,\n
-                        The license for this software is solely meant for this product only.\n
-                        Everyone is free to share and distribute code. however you are not\n
-                        allowed to sell it or license it in any kind of monetary or comercial way that is not allowed through the author of this software.\n
-                        You are not allowed to change to original author any where in this code.\n
-                        If you add onto this project then author that part only, add yourself as contributor with the original author also stated.\n
-                    `} style={`fixed bg-primary text-light max-w-[350px] self-center justify-self-center z-20`}/>
+                    <MessageBox active={infoBox.active} type={infoBox.type} text={infoBox.text} style={infoBox.style} />
                 </div>
             </Section>
 
@@ -553,13 +569,7 @@ const Component: JSX.Element = (): JSX.Element => {
                     }
 
                     <div className={`flex flex-row justify-end items-center w-[35%]`}>
-                        <Button ref={btnInfo} title={<Icons.Signs.Info strokeColor={"#eee"} strokeWidth={1.5} iconSize={"26"} fillColor={"none"}/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => {
-                            if (infoActive) {
-                                setInfoActive(false)
-                            } else {
-                                setInfoActive(true)
-                            }
-                        }} disabled={false} />
+                        <Button ref={btnInfo} title={<Icons.Signs.Info strokeColor={"#eee"} strokeWidth={1.5} iconSize={"26"} fillColor={"none"}/>} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("toggle")} disabled={false} />
                     </div>
 
                 </div>
