@@ -5,12 +5,12 @@ class Style
 
   properties: Array;
 
-  constructor(str) {
+  constructor(str, obj = {}) {
     var regex = /([\w-]*)\s*:\s*([^;]*)/g;
     var match,
       properties = {};
 
-    str += " ";
+    str += " " + this.convProps(obj);
 
     while ((match = regex.exec(str)))
       properties[match[1]] = match[2].trim();
@@ -46,4 +46,8 @@ class Style
   };
 };
 
-export default Style;
+export default class StyleSheet extends Style {
+  constructor(str, obj = {}) {
+    return super(str, obj);
+  }
+}

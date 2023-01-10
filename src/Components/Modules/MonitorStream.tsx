@@ -4,21 +4,16 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-loop-func */
 
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import * as ml5 from 'ml5';
-import Style from './Classes/Style';
+import Style from '../../Utils/Classes/Style';
 
-import Div, { Header, Wrapper, Container, Section } from './Modules/Containers';
-import Button from './Modules/Buttons';
-import Icons from './Modules/Icons';
+import Icons from '../Libraries/Icons';
+import Button from './Buttons';
+import { Section, Wrapper } from './Containers';
+import MessageBox from './MessageBox';
 
-const MessageBox: JSX.Element = ({ active, text, type, style }): JSX.Element => (
-    <div className={`w-full px-4 py-4 my-4 ${style || "bg-stone-900 text-stone-200"} text-[16px] font-extralight rounded-sm ${active ||  "hidden"}`} role="alert">
-        <span className="font-bold uppercase">{type || "example"}: </span>
-        {text || "this is a message box."}
-    </div>
-)
 
 const Component = (): JSX.Element => {
 
@@ -559,7 +554,7 @@ const Component = (): JSX.Element => {
                 <MessageBox active={infoBox.active} type={infoBox.type} text={infoBox.text} style={infoBox.style} />
             </Section>
 
-            <Section classes={"absolute top-0 left-0 w-[100vw] h-[100vh] z-10"}>
+            <Section classes={"absolute top-0 left-0 w-[100%] h-[100%] z-10"}>
 
                 <div className={"absolute top-0 left-0 w-[100%] h-[100%] flex flex-col justify-center items-center"}>
                     <canvas id="feed" className={canvasClasses + " "} ref={canvasElem}>

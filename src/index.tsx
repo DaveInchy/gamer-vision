@@ -1,22 +1,21 @@
 // @ts-nocheck
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 
 import App from './Application/App';
-import './Assets/index.css';
+import './index.css';
 
 // Content container
 const RootContainer = document.getElementById('root');
 
-// Content structure
-const RootStructure = (
+// Application rendering
+const Root = ReactDOM.createRoot( RootContainer );
+
+Root.render((
   <React.StrictMode>
     <App />
   </React.StrictMode>
-);
-
-// Application rendering
-ReactDOM.render( RootStructure, RootContainer );
+))
 
 // Performance monitoring
 const reportWebVitals = (onPerfEntry) => {

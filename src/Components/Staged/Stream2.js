@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
+// @ts-nocheck
 /* eslint-disable no-loop-func */
 
 import * as ml5 from 'ml5';
@@ -5,12 +8,12 @@ import * as ml5 from 'ml5';
 // import * as posenet from '@tensorflow-models/posenet';
 // import * as cocossd from '@tensorflow-models/coco-ssd';
 
-import React, {  useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { Container, Section } from '../Modules/Containers';
 import Button from '../Modules/Buttons';
+import { Container, Section } from '../Modules/Containers';
 
-import Style from '../Classes/Style';
+import Style from '../../Utils/Classes/Style';
 
 
 const Component = ({ onSuccess }) => {

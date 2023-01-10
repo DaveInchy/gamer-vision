@@ -3,18 +3,18 @@
   "name": "Gamer Vision Assistance",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "icon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "favicon.ico",
-      "type": "image/x-icon",
-      "sizes": "192x192"
+      "src": "logo256.png",
+      "type": "image/png",
+      "sizes": "256x256"
     },
     {
-      "src": "favicon.ico",
-      "type": "image/x-icon",
+      "src": "logo512.png",
+      "type": "image/png",
       "sizes": "512x512"
     }
   ],

@@ -1,20 +1,20 @@
 import React from 'react';
-import Style from '../Classes/Style';
+import StyleSheet from '../../Utils/Classes/Style';
 
 export default class Button extends React.Component {
 
     title = "A Button";
+    action;
+    styles;
+    classes;
+    disabled;
 
-    /**
-     * @param {any} props
-     */
     constructor(
-        props
+        props: any
     ) {
         super(props);
 
-        this.props = props;
-        const { action, title, style, classes, disabled } = this.props;
+        const { action, title, style, classes, disabled } = props;
 
         this.action = action;
         this.title = title;
@@ -26,9 +26,7 @@ export default class Button extends React.Component {
 
     render() {
 
-        const Styles = new Style(`
-            ${this.styles || ""}
-        `);
+        const Styles = new StyleSheet(``, this.styles || {});
 
         // Combine default classes with user-defined classes
         const Classes = `

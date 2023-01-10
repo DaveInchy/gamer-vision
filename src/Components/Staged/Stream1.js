@@ -1,10 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-loop-func */
-
+// @ts-nocheck
 import * as ml5 from 'ml5';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import Style from './Classes/Style';
-import { Container, Section } from './Modules/Containers';
-import Button from './Modules/Buttons';
+import { useEffect, useRef, useState } from 'react';
+import Style from '../../Utils/Classes/Style';
+import Button from '../Modules/Buttons';
+import { Container, Section } from '../Modules/Containers';
 
 
 const Component = ({ onSuccess }) => {
@@ -206,7 +208,7 @@ const Component = ({ onSuccess }) => {
 
                             console.log("video element started playing");
 
-                            if (draw() != false) {
+                            if (draw() !== false) {
                                 onSuccess({ canvasElement: canvas, videoElement: video, mediaStream: Stream });
                             } else {
                                 console.log("test if you can actually do a callback to the app root, inverse tree bitch.. just backtrace! btw i am atm on line 173.. but youll definately find this long string in the code...")

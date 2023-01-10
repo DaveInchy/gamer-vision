@@ -1,1 +1,0 @@
-export const placeHolder = () => require("./../../Assets/placeholder.jpg");
