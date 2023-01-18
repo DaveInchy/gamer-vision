@@ -48,6 +48,7 @@ class Style
 
 export default class StyleSheet extends Style {
   constructor(str, obj = {}) {
-    return super(str, obj);
+    super(str, obj)
+    return this;
   }
 }

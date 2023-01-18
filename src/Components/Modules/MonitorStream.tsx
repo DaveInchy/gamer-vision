@@ -4,18 +4,18 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-loop-func */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import * as ml5 from 'ml5';
 import Style from '../../Utils/Classes/Style';
 
 import Icons from '../Libraries/Icons';
 import Button from './Buttons';
-import { Section, Wrapper } from './Containers';
+import { Section } from './Containers';
 import MessageBox from './MessageBox';
 
 
-const Component = (): JSX.Element => {
+const Component = ({ menuCallback }): JSX.Element => {
 
     const initialScale = 1;
 
@@ -54,6 +54,15 @@ const Component = (): JSX.Element => {
     const [frameRate, setFrameRate] = useState(30);
     const [frameTime, setFrameTime] = useState(0);
     const [frameCount, setFrameCount] = useState(0);
+
+    const [menu, setMenu] = useState(false);
+
+    useLayoutEffect(() => {
+        (async () => {
+            await menuCallback();
+        })()
+        setMenu(false);
+    }, [menu])
 
     useEffect(() => {
 
@@ -413,7 +422,7 @@ const Component = (): JSX.Element => {
                 setInfoBox({
                     active: true,
                     text: <InfoText />,
-                    type: "🚀 Thanks for checking out my demo ❤️",
+                    type: "❤️❤️❤️ Thanks for checking out my demo",
                     style: `bg-primary text-light max-w-[50vw] mx-auto z-30`,
                 })
             } else {
@@ -554,7 +563,7 @@ const Component = (): JSX.Element => {
                 <MessageBox active={infoBox.active} type={infoBox.type} text={infoBox.text} style={infoBox.style} />
             </Section>
 
-            <Section classes={"absolute top-0 left-0 w-[100%] h-[100%] z-10"}>
+            <Section classes={"absolute top-0 left-0 w-[100%] h-[100%] z-10 bg-black"}>
 
                 <div className={"absolute top-0 left-0 w-[100%] h-[100%] flex flex-col justify-center items-center"}>
                     <canvas id="feed" className={canvasClasses + " "} ref={canvasElem}>
@@ -565,14 +574,14 @@ const Component = (): JSX.Element => {
                     </video>
                 </div>
 
-                <div className={"absolute top-0 left-0 w-[100%] h-[100%]"}>
+                <div className={"absolute top-0 left-0 w-[100%] h-[100%] snap-y snap-center snap-proximity"}>
                     <div className={"absolute top-0 w-[100%] flex flex-row justify-between items-start"}>
                         <div className={`w-[45%] flex justify-start items-baseline`}>
                             <Button title={<Icons.Media.Network.Online strokeColor={"#eee"} strokeWidth={1.95} iconSize={"32"} fillColor={"none"} />} classes={"rounded-none my-6 mx-4 bg-transparent uppercase hover:shadow-2xl hover:translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => false} disabled={false} />
                         </div>
 
                         <div className={`w-[45%] flex justify-end items-baseline`}>
-                            <Button title={<Icons.Actions.Menu strokeColor={"#eee"} strokeWidth={1.95} iconSize={"32"} fillColor={"none"} />} classes={"rounded-none my-6 mx-4 bg-transparent uppercase hover:shadow-2xl hover:translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setStatus("menu")} />
+                            <Button title={<Icons.Actions.Menu strokeColor={"#eee"} strokeWidth={1.95} iconSize={"32"} fillColor={"none"} />} classes={"rounded-none my-6 mx-4 bg-transparent uppercase hover:shadow-2xl hover:translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => setMenu(true)} />
                         </div>
                     </div>
 
@@ -590,24 +599,9 @@ const Component = (): JSX.Element => {
                         </div>
 
                         <div className={`w-[45%] flex justify-end items-baseline`}>
-                            <Button ref={btnInfo} title={<Icons.Signs.Info strokeColor={"#5b59f7"} strokeWidth={1.95} iconSize={"32"} fillColor={"none"} />} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => infoBox.active === true?setStatus("infoOff"):setStatus("infoOn")} disabled={false} />
+                            <Button ref={btnInfo} title={<Icons.Signs.Info strokeColor={"cyan"} strokeWidth={1.95} iconSize={"32"} fillColor={"none"} />} classes={"rounded-none my-6 mx-4 bg-transparent text-white uppercase hover:shadow-2xl hover:-translate-y-[3px] transform-gpu transition-all ease-linear duration-500 inline-block"} styles={"font-size: 50px;"} action={() => infoBox.active === true?setStatus("infoOff"):setStatus("infoOn")} disabled={false} />
                         </div>
                     </div>
-                </div>
-
-                <div className={"absolute top-0 right-0 h-[100vw] min-h-[100vw] max-h-[100vw] xs:w-[100vw] sm:w-[100vw] md:w-[40vw] lg:w-[20vw] z-20 hidden"} id={"menu-root"}>
-
-                    <Wrapper classes={"w-[100%] h-[100vw] bg-dark p-5"}>
-                        <h1 className={"m-1"}>Menu</h1>
-                        <hr/>
-                        <Button title={"Menu Item 1"} classes={"bg-stone-900 rounded-full text-bold mt-5 w-full outline"} styles={"border: 2px solid white;"} disables={false} action={() => false} />
-                        <Button title={"Menu Item 2"} classes={"bg-stone-900 rounded-full text-bold mt-5 w-full outline"} styles={"border: 2px solid white;"} disables={false} action={() => false} />
-                        <Button title={"Menu Item 3"} classes={"bg-stone-900 rounded-full text-bold mt-5 w-full outline"} styles={"border: 2px solid white;"} disables={false} action={() => false} />
-                        <Button title={"Menu Item 4"} classes={"bg-stone-900 rounded-full text-bold mt-5 w-full outline"} styles={"border: 2px solid white;"} disables={false} action={() => false} />
-                        <Button title={"Menu Item 5"} classes={"bg-stone-900 rounded-full text-bold mt-5 w-full outline"} styles={"border: 2px solid white;"} disables={false} action={() => false} />
-                        <Button title={"Menu Item 6"} classes={"bg-stone-900 rounded-full text-bold mt-5 w-full outline"} styles={"border: 2px solid white;"} disables={false} action={() => false} />
-                    </Wrapper>
-
                 </div>
 
             </Section>
